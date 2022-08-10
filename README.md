@@ -3,6 +3,7 @@
 ## 使用到的gcc编译器
 
 - arm-none-eabi [gcc-arm-10.3-2021.07-x86_64-arm-none-eabi](https://developer.arm.com/downloads/-/gnu-a)
+- aarch64-none-linux-gnu [gcc-arm-10.3-2021.07-x86_64-aarch64-none-linux-gnu](https://developer.arm.com/downloads/-/gnu-a)
 
 ## 非中断模式的串口(bare metal hello world)
 
@@ -207,3 +208,56 @@ SECTIONS
 	qemu-system-arm -M versatilepb -serial stdio -kernel test.bin
 
 上面命令将虚拟机的串口重定向到主机的标准输入输出,此时即可进行中断模式的回显
+## 用QEMU启动内核[参考 Compiling Linux kernel for QEMU ARM emulator](https://balau82.wordpress.com/2010/03/22/compiling-linux-kernel-for-qemu-arm-emulator/)
+
+### 准备内核
+
+编译内核
+
+	cp qemu_defconfig arch/arm64/configs/
+	make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- qemu_defconfig
+	make ARCH=arm64 CROSS_COMPILE=aarch64-none-linux-gnu- -j$(nproc)
+
+验证内核能够启动(使用Image或Image.gz都可以,没有文件系统最终会卡住)
+
+	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 2 -m 1024 \
+		-nographic \
+		-kernel Image
+
+### 准备最简单的文件系统
+
+文件系统的第一个程序一般是init,内核希望该程序不退出,所以这里循环卡在最后
+
+```c
+#include <stdio.h>
+
+void main() {
+	printf("Hello World!\n");
+	while(1);
+}
+```
+
+编译时使用静态链接编译选项
+
+	aarch64-none-linux-gnu-gcc -static test.c -o test
+
+用可执行程序来创建一个最简单的文件系统
+
+	echo test | cpio -o --format=newc > rootfs
+
+其中newc格式是initramfs文件系统格式
+
+### 启动虚拟机测试
+
+命令行如下
+
+	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -m 1024 \
+		-nographic \
+		-kernel Image \
+		-initrd rootfs \
+		-append "root=/dev/ram rdinit=/test"
+
+在挂载文件系统后会执行制定的程序,执行结果如下
+
+		[    7.674339] Run /test as init process
+		Hello World!
