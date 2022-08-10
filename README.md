@@ -75,3 +75,39 @@ SECTIONS
 使用QEMU测试(ctrl+a, x退出QEMU)
 
 	qemu-system-arm -M versatilepb -m 128M -nographic -kernel test.bin
+
+### 串口编程实例2[(参考文章 Emulating ARM PL011 serial ports)](https://balau82.wordpress.com/2010/11/30/emulating-arm-pl011-serial-ports/)
+
+使用的主板是versatilepb, 三个串口分别映射到地址空间的
+
+    pl011_create(0x101f1000, pic[12], serial_hd(0));
+    pl011_create(0x101f2000, pic[13], serial_hd(1));
+    pl011_create(0x101f3000, pic[14], serial_hd(2));
+
+	0x101f1000 UART0
+	0x101f2000 UART1
+	0x101f3000 UART2
+
+测试代码[test.c](./bare-serials/test.c)是将串口输入的字符转换成大写
+
+```c
+static inline char upperchar(char c) {
+	if((c >= 'a') && (c <= 'z')) {
+		return c - 'a' + 'A';
+	} else {
+		return c;
+	}
+}
+```
+
+编译方法同上,运行测试
+
+	qemu-system-arm -M versatilepb -m 128M -kernel test.bin \
+		-serial stdio \
+		-serial telnet:localhost:1235,server \
+		-serial telnet:localhost:1236,server
+
+在主机上先telnet连接1235端口后再连接1236端口之后就可以按键测试了
+
+	telnet 127.0.0.1 1235
+	telnet 127.0.0.1 1236
