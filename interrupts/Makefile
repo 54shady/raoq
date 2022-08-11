@@ -33,6 +33,7 @@ debug: $(DEBUG_APP)
 	xterm -e 'qemu-system-arm -M versatilepb -m 128M -s -nographic -S -kernel $(DEBUG_APP).bin'&
 	ddd --debugger $(GDB) --command $(DEBUG_APP)-qemu.gdb
 
+# qemu-system-arm -M versatilepb -m 128M -display none -serial stdio -device loader,file=test
 run: $(DEBUG_APP)
 	qemu-system-arm -M versatilepb -m 128M \
 		-display none \

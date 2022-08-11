@@ -77,6 +77,10 @@ SECTIONS
 
 	qemu-system-arm -M versatilepb -m 128M -nographic -kernel test.bin
 
+或者通过loader设备来指定(其中addr指定任意地址都可以运行?)
+
+	qemu-system-arm -M versatilepb -m 128M -nographic -device loader,file=test,addr=0x10000
+
 ### 串口编程实例2[(参考文章 Emulating ARM PL011 serial ports)](https://balau82.wordpress.com/2010/11/30/emulating-arm-pl011-serial-ports/)
 
 使用的主板是versatilepb, 三个串口分别映射到地址空间的
@@ -221,15 +225,20 @@ SECTIONS
 
 	aarch64-none-linux-gnu-readelf -e u-boot | grep Entry
 
-使用qemu启动u-boot
+使用qemu启动u-boot(下面两条命令都可以)
 
 	qemu-system-aarch64 -machine virt -cpu cortex-a57 -bios u-boot.bin -nographic
+	qemu-system-aarch64 -machine virt -cpu cortex-a57 -device loader,file=u-boot.bin,addr=0x0 -nographic
 
 NorFlash(parallel flash)启动u-boot(virt平台支持)
 
 	dd if=/dev/zero of=flash.bin bs=4096 count=16384
 	dd if=u-boot.bin of=flash.bin conv=notrunc bs=4096
+
+下面两条命令都可以启动
+
 	qemu-system-aarch64 -machine virt -cpu cortex-a57 -m 1G -drive file=flash.bin,format=raw,if=pflash -nographic
+	qemu-system-aarch64 -machine virt -cpu cortex-a57 -device loader,file=flash.bin,addr=0x0 -nographic
 
 ## 用QEMU启动内核[参考 Compiling Linux kernel for QEMU ARM emulator](https://balau82.wordpress.com/2010/03/22/compiling-linux-kernel-for-qemu-arm-emulator/)
 
