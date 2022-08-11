@@ -208,6 +208,29 @@ SECTIONS
 	qemu-system-arm -M versatilepb -serial stdio -kernel test.bin
 
 上面命令将虚拟机的串口重定向到主机的标准输入输出,此时即可进行中断模式的回显
+
+## 使用QEMU启动u-boot
+
+使用指定的代码版本编译
+
+	git checkout v2022.04 -b v202204
+	make ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- qemu_arm64_defconfig
+	make ARCH=arm CROSS_COMPILE=aarch64-none-linux-gnu- -j$(nproc)
+
+查看u-boot的入口地址(0x0),所以qemu启动时需要将u-boot.bin放在0地址启动
+
+	aarch64-none-linux-gnu-readelf -e u-boot | grep Entry
+
+使用qemu启动u-boot
+
+	qemu-system-aarch64 -machine virt -cpu cortex-a57 -bios u-boot.bin -nographic
+
+NorFlash(parallel flash)启动u-boot(virt平台支持)
+
+	dd if=/dev/zero of=flash.bin bs=4096 count=16384
+	dd if=u-boot.bin of=flash.bin conv=notrunc bs=4096
+	qemu-system-aarch64 -machine virt -cpu cortex-a57 -m 1G -drive file=flash.bin,format=raw,if=pflash -nographic
+
 ## 用QEMU启动内核[参考 Compiling Linux kernel for QEMU ARM emulator](https://balau82.wordpress.com/2010/03/22/compiling-linux-kernel-for-qemu-arm-emulator/)
 
 ### 准备内核
