@@ -261,3 +261,18 @@ void main() {
 
 		[    7.674339] Run /test as init process
 		Hello World!
+
+### 使用发行版提供的文件系统
+
+使用脚本[./gen_rootfs.sh ubuntu-base-20.04.4-base-arm64.tar.gz](./gen_rootfs.sh)制作文件系统
+
+	ext2格式: linuxroot.img, qemu命令行 -format=raw
+	qcow2格式: linuxroot.qcow2, qemu命令行 -format=qcow2
+
+启动脚本
+
+	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -m 1024 \
+		-nographic \
+		-kernel Image \
+		-drive file=linuxroot.img,if=none,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 \
+		-append "rootwait root=/dev/vda console=ttyAMA0"
