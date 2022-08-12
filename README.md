@@ -93,7 +93,7 @@ SECTIONS
 	0x101f2000 UART1
 	0x101f3000 UART2
 
-测试代码[test.c](./bare-serials/test.c)是将串口输入的字符转换成大写
+测试代码[test.c](./bare-serials/arm/test.c)是将串口输入的字符转换成大写
 
 ```c
 static inline char upperchar(char c) {
