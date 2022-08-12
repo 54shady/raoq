@@ -4,7 +4,7 @@
 
 .globl	_start
 _start:
-	/* init UART (38400 8N1) */
+	/* init UART (38400 8N1), 不做初始化也能正常使用 */
 	ldr	x4, =UART_BASE		// UART base
 	mov	w5, #0x10		// IBRD
 	str	w5, [x4, #0x24]
@@ -12,7 +12,7 @@ _start:
 	orr	w5, w5, #0x0001		// CR
 	str	w5, [x4, #0x30]
 
-	/* check CPU ID */
+	/* check CPU ID, 也是非比要代码 */
 	mrs x0, mpidr_el1
 	tst x0, #15
 	b.ne    other_cpu
