@@ -32,3 +32,5 @@ Run Qemu to test
 		-semihosting -m 128M \
 		-nographic -monitor none -serial stdio \
 		-kernel virt.elf
+
+## Example02 (Copy from Qemu source tests/tcg/aarch64/system)
