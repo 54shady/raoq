@@ -213,7 +213,7 @@ SECTIONS
 
 上面命令将虚拟机的串口重定向到主机的标准输入输出,此时即可进行中断模式的回显
 
-## 使用QEMU启动u-boot
+## 用QEMU启动u-boot
 
 使用指定的代码版本编译
 
@@ -256,7 +256,7 @@ NorFlash(parallel flash)启动u-boot(virt平台支持)
 		-nographic \
 		-kernel Image
 
-### 准备最简单的文件系统
+### 最简单的文件系统(只包含一个init程序)
 
 文件系统的第一个程序一般是init,内核希望该程序不退出,所以这里循环卡在最后
 
@@ -279,9 +279,7 @@ void main() {
 
 其中newc格式是initramfs文件系统格式
 
-### 启动虚拟机测试
-
-命令行如下
+启动虚拟机测试命令行如下
 
 	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -m 1024 \
 		-nographic \
@@ -294,14 +292,27 @@ void main() {
 		[    7.674339] Run /test as init process
 		Hello World!
 
-### 使用发行版提供的文件系统
+### 使用busybox制作文件系统(适合小型嵌入式系统)
 
-使用脚本[./gen_rootfs.sh ubuntu-base-20.04.4-base-arm64.tar.gz](./gen_rootfs.sh)制作文件系统
+使用脚本[genrd.sh](./linux-simplest/genrd.sh)自动构建文件系统ramdisk.img
+
+	./genrd.sh /pat/to/busybox-1.34.1
+
+启动虚拟机测试命令行如下
+
+	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 2 -m 4096 \
+		-kernel Image -nographic \
+		-append "root=/dev/ram0 rw rootfstype=ext4 console=ttyAMA0 init=/linuxrc ignore_loglevel" \
+		-initrd ramdisk.img
+
+### 使用发行版提供的文件系统(具备完整的系统功能)
+
+使用脚本[./gen_rootfs.sh ubuntu-base-20.04.4-base-arm64.tar.gz](./linux-simplest/gen_rootfs.sh)制作文件系统
 
 	ext2格式: linuxroot.img, qemu命令行 -format=raw
 	qcow2格式: linuxroot.qcow2, qemu命令行 -format=qcow2
 
-启动脚本
+启动虚拟机测试命令行如下
 
 	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -m 1024 \
 		-nographic \
