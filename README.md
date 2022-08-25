@@ -215,6 +215,8 @@ SECTIONS
 
 ## 用QEMU启动u-boot
 
+[versatilepb board 使用u-boot](./bare-hello/README.md)
+
 使用指定的代码版本编译
 
 	git checkout v2022.04 -b v202204
