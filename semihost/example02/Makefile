@@ -22,7 +22,7 @@ $(IMAGE): kernel.ld boot.o printf.o $(OBJS)
 	$(OBJDUMP) -d kernel.elf > kernel.list
 	$(OBJDUMP) -t kernel.elf | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > kernel.sym
 
-qemu: $(IMAGE)
+run: $(IMAGE)
 	@qemu-system-aarch64 -M ? | grep virt >/dev/null || exit
 	@echo "Press Ctrl-A and then X to exit QEMU"
 	@echo

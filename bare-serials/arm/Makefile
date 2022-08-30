@@ -5,7 +5,7 @@
 #arm-none-eabi-objcopy -O binary test test.bin
 
 CROSS_COMPILE = arm-none-eabi-
-include ../common/common.mk
+include ../../common/common.mk
 
 ASFLAGS = -mcpu=arm926ej-s -g
 CFLAGS = -mcpu=arm926ej-s -g
