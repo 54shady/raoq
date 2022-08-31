@@ -30,7 +30,7 @@ clean:
 	rm -rf $(DEBUG_APP)
 
 debug: $(DEBUG_APP)
-	xterm -e 'qemu-system-arm -M versatilepb -m 128M -s -nographic -S -kernel $(DEBUG_APP).bin'&
+	xterm -e 'qemu-system-arm -M versatilepb -m 128M -s -nographic -S -kernel $(DEBUG_APP)'&
 	ddd --debugger $(GDB) --command $(DEBUG_APP)-qemu.gdb
 
 run: $(DEBUG_APP)
@@ -38,4 +38,4 @@ run: $(DEBUG_APP)
 		-serial stdio \
 		-serial telnet:localhost:1235,server \
 		-serial telnet:localhost:1236,server \
-		-kernel $<
+		-device loader,file=$<,addr=0x10000

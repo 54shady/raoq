@@ -33,6 +33,10 @@ debug: $(DEBUG_APP)
 	xterm -e 'qemu-system-arm -M versatilepb -m 128M -s -nographic -S -kernel $(DEBUG_APP).bin'&
 	ddd --debugger $(GDB) --command $(DEBUG_APP)-qemu.gdb
 
-# qemu-system-arm -M versatilepb -m 128M -nographic -device loader,file=test,addr=0x10000
+# 只有raw格式的程序才需要制定addr参数,其它格式该参数被忽视
+# qemu-system-arm -M versatilepb -m 128M -nographic -device loader,file=test
+# 使用raw格式时(test.bin)需要指定程序的链接地址
+# readelf -l test
+# qemu-system-arm -M versatilepb -m 128M -nographic -device loader,file=test.bin,addr=0x10000
 run: $(DEBUG_APP)
-	qemu-system-arm -M versatilepb -m 128M -nographic -kernel $<
+	qemu-system-arm -M versatilepb -m 128M -nographic -device loader,file=$<,addr=0x10000

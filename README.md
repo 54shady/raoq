@@ -213,6 +213,16 @@ SECTIONS
 
 上面命令将虚拟机的串口重定向到主机的标准输入输出,此时即可进行中断模式的回显
 
+## 关于qemu参数-kernel和-device loader选择
+
+- 参数-kernel一般用于linux kernel文件,默认加载地址0x10000
+- 参数-device loader,file=<raw-binary | elf-exec>
+
+### generic loader中的addr
+
+- raw格式的文件需要指定链接地址addr
+- non-raw格式的文件不关心addr的值
+
 ## 用QEMU启动u-boot
 
 [versatilepb board 使用u-boot](./bare-hello/README.md)
