@@ -19,8 +19,8 @@ ROOTFS_NAME="linuxroot.img"
 
 mkdir $TMP_DIR
 tar xvf $seed -C $TMP_DIR
-dd if=/dev/zero of=$ROOTFS_NAME bs=1M count=1024
-sudo mkfs.ext2 $ROOTFS_NAME
+dd if=/dev/zero of=$ROOTFS_NAME bs=1M count=512
+sudo mkfs.ext4 $ROOTFS_NAME
 mkdir $TARGET_DIR
 sudo mount $ROOTFS_NAME $TARGET_DIR/
 sudo cp -rfp $TMP_DIR/*  $TARGET_DIR/

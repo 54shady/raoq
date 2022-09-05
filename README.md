@@ -225,7 +225,9 @@ SECTIONS
 
 ## 用QEMU启动u-boot
 
-[versatilepb board 使用u-boot](./bare-hello/README.md)
+### ARM [versatilepb board 使用u-boot](./bare-hello/README.md)
+
+### ARM64 virt使用u-boot
 
 使用指定的代码版本编译
 
@@ -324,10 +326,12 @@ void main() {
 	ext2格式: linuxroot.img, qemu命令行 -format=raw
 	qcow2格式: linuxroot.qcow2, qemu命令行 -format=qcow2
 
-启动虚拟机测试命令行如下
+启动虚拟机测试命令行如下(-append后面的是传递给内核的启动参数)
 
-	qemu-system-aarch64 -M virt -cpu cortex-a53 -smp 1 -m 1024 \
+	qemu-system-aarch64 -M virt \
+		-cpu cortex-a53 \
+		-smp 1 \
+		-m 1024 \
 		-nographic \
-		-kernel Image \
-		-drive file=linuxroot.img,if=none,format=raw,id=hd0 -device virtio-blk-device,drive=hd0 \
-		-append "rootwait root=/dev/vda console=ttyAMA0"
+		-kernel Image -append "rootwait root=/dev/vda console=ttyAMA0" \
+		-drive file=linuxroot.img,if=none,format=raw,id=hd0 -device virtio-blk-device,drive=hd0

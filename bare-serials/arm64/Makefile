@@ -26,10 +26,11 @@ run: $(IMAGE)
 	@qemu-system-aarch64 -M ? | grep virt >/dev/null || exit
 	@echo "Press Ctrl-A and then X to exit QEMU"
 	@echo
-	qemu-system-aarch64 -machine virt -cpu cortex-a57 \
-	                    -smp 4 -m 4096 \
-			    -nographic -serial mon:stdio \
-	                    -kernel $(IMAGE)
+	qemu-system-aarch64 -M virt \
+		-cpu cortex-a57 \
+		-smp 2 -m 1024 \
+		-nographic -serial mon:stdio \
+		-kernel $<
 
 clean:
 	rm -f $(IMAGE) *.o *.list *.sym
